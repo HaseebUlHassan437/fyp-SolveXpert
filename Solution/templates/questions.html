@@ -1,0 +1,332 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolveXpert Chat</title>
+  <link href="{% static 'Solution/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'Solution/css/question.css' %}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="icon" href="{% static 'Solution/SolveXpert Logo.jpg' %}" type="image/x-icon" />
+
+
+  <style>
+  .role-label {
+  font-weight: bold;
+  color: var(--text-color);
+  margin-right: 6px;
+  font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Consolas', 'DejaVu Serif', serif;
+  }
+
+    body{
+      background: var(--background-color);
+    }
+    .sidebar-toggle-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: #1d3557;
+      color: white;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 6px;
+      z-index: 1000;
+      cursor: pointer;
+      transition: left 0.3s ease;
+    }
+    
+    /* Fully collapse sidebar */
+    .sidebar.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      transition: all 0.3s ease;
+    }
+    
+    /* Shift content to the left when sidebar is collapsed */
+    .content.sidebar-collapsed {
+      margin-left: 0 !important;
+    }
+    
+    /* Move toggle button to edge when sidebar is collapsed */
+    .main-container .sidebar.collapsed ~ .sidebar-toggle-btn {
+      left: 5px !important;
+    }
+
+    .ai-chat-area, .user-chat-area {
+      font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Consolas", "DejaVu Serif", serif;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+
+
+
+  </style>
+ <script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+  
+</head>
+<body>
+
+  <div class="main-container d-flex">
+    <!-- Sidebar -->
+    <!-- ✅ Sidebar Toggle Button (OUTSIDE sidebar so it stays visible) -->
+<button id="sidebarToggle" class="sidebar-toggle-btn">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- ✅ Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header text-center">
+    <img class="navbar-logo" src="{% static 'Solution/SolveXpert Logo.jpg' %}" alt="SolveXpert Logo">
+    <a href="{% url 'home' %}" class="mt-2" style="text-decoration: none; color: inherit;">
+      <h4>SolveXpert</h4>  <!-- SolveXpert Title as a clickable link -->
+    </a>
+  </div>
+
+
+  <div class="sidebar-content">
+    <a href="{% url 'rag' %}" class="btn btn-theme d-block mt-2" style="color: var(--text-color);">
+      <i class="fas fa-file-alt"></i> RAG
+    </a>
+    <a href="{% url 'llama3' %}" class="btn btn-theme d-block mt-2" style="color: var(--text-color);">
+      <i class="fas fa-file-alt"></i> Our Model
+    </a>
+    
+    
+    <a href="?new_chat=1" class="new-chat-button d-block" id="new-chat-btn">
+      <i class="fas fa-plus"></i> New chat
+    </a>
+    
+
+    <div class="chat-history flex-grow-1 ms-2">
+      {% for chat in chat_history %}
+        <div class="chat-history-item d-flex justify-content-between align-items-center">
+          <a href="?chat_id={{ chat.id }}" title="{{ chat.short_title }}"
+            class="flex-grow-1 text-white text-truncate text-decoration-none {% if selected_chat and selected_chat.id == chat.id %}fw-bold border-start border-4 border-info ps-2{% endif %}">
+            {{ chat.short_title }}
+          </a>
+          <span class="divider"></span>
+          <a href="{% url 'delete_chat' chat.id %}" class="delete-chat text-white"
+            onclick="return confirm('Are you sure you want to delete this chat?');">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      {% empty %}
+        <div class="chat-history-item">No previous chats.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <button id="themeToggleBtn" class="theme-toggle-btn">
+      <i class="fas fa-moon"></i> Themes
+    </button>
+    <button id="logoutBtn" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</div>
+
+
+    <!-- Chat Content -->
+    <div class="content flex-grow-1" id="chatContent">
+      <div class="chat-container" id="responseDiv">
+        {% for message in chat_messages %}
+  {% if message.is_user %}
+    <div class="user-chat-box">
+      <div class="user-chat-area">
+        <span class="role-label"></span> {{ message.content }}
+      </div>
+    </div>
+  {% else %}
+    <div class="ai-chat-box">
+      <div class="ai-chat-area markdown position-relative" data-raw="{{ message.content|escape }}">
+        <span class="role-label"></span>
+        <button class="copy-btn position-absolute top-0 end-0 m-2 btn btn-sm btn-outline-light" onclick="copyAnswer(this)">
+          <i class="fas fa-copy"></i>
+        </button>
+        {{ message.content }}
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+
+      </div>
+
+      <div class="prompt-area">
+        <!-- <form id="askQuestionForm" method="post" action="{% url 'questions' %}" enctype="multipart/form-data" autocomplete="off">
+          {% csrf_token %}
+          <textarea name="question" id="questionInput" class="growing-textarea" placeholder="Message..." rows="1" required></textarea>
+          <button type="button" id="image-button">
+            <img id="previewImage" src="{% static 'Solution/img.svg' %}" alt="Upload">          </button>
+          <input type="file" name="image" id="fileUpload" accept="image/*" capture="environment" hidden>
+          <button type="submit" id="submit">
+            <img src="{% static 'Solution/submit.svg' %}" alt="Send">
+          </button>
+          {% comment %} <button type="button" class="btn btn-secondary mt-2" onclick="askLlama()">Ask with LLaMA 3</button> {% endcomment %}
+
+        </form> -->
+      <form id="askQuestionForm" method="post" action="{% url 'questions' %}" enctype="multipart/form-data" autocomplete="off">
+        {% csrf_token %}
+        <input type="hidden" name="chat_id" id="chat-id" value="{{ selected_chat.id|default_if_none:'' }}">
+        
+        <textarea name="question" id="questionInput" class="growing-textarea" placeholder="Message..." rows="1" required></textarea>
+        
+        <button type="button" id="image-button">
+          <img id="previewImage" src="{% static 'Solution/img.svg' %}" alt="Upload">
+        </button>
+        
+        <input type="file" name="image" id="fileUpload" accept="image/*" capture="environment" hidden>
+
+        <button type="submit" id="submit">
+          <img src="{% static 'Solution/submit.svg' %}" alt="Send">
+        </button>
+      </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">Are you sure you want to log out?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmLogout" class="btn btn-danger">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="{% static 'Solution/js/question.js' %}"></script>
+  <script>window.logoutUrl = "{% url 'logout' %}";</script>
+  <script>
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+      window.location.href = window.logoutUrl;
+    });
+
+    document.getElementById("image-button").addEventListener("click", function () {
+      document.getElementById("fileUpload").click();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".markdown").forEach(el => {
+        el.innerHTML = marked.parse(el.textContent.trim());
+      });
+    });
+    
+  </script>
+  <script>
+    const textarea = document.getElementById('questionInput');
+    textarea.addEventListener('input', () => {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 96) + 'px'; // max 4 lines (~96px)
+    });
+  </script>
+  <script>
+ function askLlama() {
+  const question = document.getElementById('questionInput').value.trim();
+  if (!question) {
+    alert("Please enter a math problem.");
+    return;
+  }
+
+  fetch("{% url 'llama3_inference' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-CSRFToken": "{{ csrf_token }}",
+    },
+    body: new URLSearchParams({ question: question })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const responseDiv = document.getElementById("responseDiv");
+      const aiBox = document.createElement("div");
+      aiBox.className = "ai-chat-box";
+
+      const aiArea = document.createElement("div");
+      aiArea.className = "ai-chat-area markdown";
+      aiBox.appendChild(aiArea);
+      responseDiv.appendChild(aiBox);
+
+      // Parse full markdown once
+      const htmlChunks = marked.parse(data.output.trim()).split(/(?=<)/g); // split before each tag
+
+      let i = 0;
+      function typeHTML() {
+        if (i < htmlChunks.length) {
+          aiArea.innerHTML += htmlChunks[i];
+          i++;
+          setTimeout(typeHTML, 20); // typing speed
+        } else {
+          if (window.MathJax) MathJax.typesetPromise();
+        }
+      }
+
+      typeHTML();
+    } else {
+      alert("Error: " + data.error);
+    }
+  })
+  .catch(err => {
+    alert("Request failed: " + err);
+  });
+}
+</script>
+
+<script>
+  const fileUpload = document.getElementById("fileUpload");
+  const previewImage = document.getElementById("previewImage");
+
+  fileUpload.addEventListener("change", () => {
+    const file = fileUpload.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImage.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      previewImage.src = "{% static 'Solution/img.svg' %}"; // fallback
+    }
+  });
+</script>
+<script>
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    const chatContent = document.getElementById('chatContent');
+    sidebar.classList.toggle('collapsed');
+    chatContent.classList.toggle('sidebar-collapsed');
+  });
+</script>
+  
+  
+</body>
+
+
+
+</html>

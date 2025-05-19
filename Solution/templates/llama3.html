@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLaMA Model</title>
+  <link href="{% static 'Solution/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'Solution/css/question.css' %}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="icon" href="{% static 'Solution/SolveXpert Logo.jpg' %}" type="image/x-icon" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <style>
+    body { background: var(--background-color); }
+    .role-label {
+      font-weight: bold;
+      color: var(--text-color);
+      margin-right: 6px;
+      font-family: 'Cambria Math', serif;
+    }
+    .sidebar-toggle-btn {
+      position: fixed; top: 15px; left: 15px;
+      z-index: 9999; background: transparent;
+      border: none; font-size: 24px;
+      color: var(--text-color); cursor: pointer;
+    }
+    .sidebar.collapsed {
+  display: none;
+}
+    
+    .ai-chat-area, .user-chat-area {
+      font-family: "Cambria Math", serif;
+      font-size: 1.05rem; line-height: 1.6;
+    }
+    /* Main content adjusted for collapsed sidebar */
+.chat-container {
+  transition: margin-left 0.3s ease; /* Smooth transition for the main content */
+}
+
+.chat-container.collapsed {
+  margin-left: 20px; /* Adjust the margin for the collapsed sidebar */
+}
+  </style>
+</head>
+<body>
+  <div class="main-container d-flex">
+    <button id="sidebarToggle" class="sidebar-toggle-btn"><i class="fas fa-bars"></i></button>
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header text-center">
+        <img class="navbar-logo" src="{% static 'Solution/SolveXpert Logo.jpg' %}" alt="SolveXpert Logo">
+        <a href="{% url 'home' %}" class="mt-2" style="text-decoration: none; color: inherit;"><h4>SolveXpert</h4></a>
+      </div>
+
+      <div class="sidebar-content">
+        <a href="{% url 'rag' %}" class="btn btn-theme d-block mt-2"><i class="fas fa-file-alt"></i> RAG</a>
+        <a href="{% url 'questions' %}" class="btn btn-theme d-block mt-2"><i class="fas fa-file-alt"></i> Solver</a>
+        <a href="?new_chat=1" class="new-chat-button d-block" id="new-chat-btn"><i class="fas fa-plus"></i> New chat</a>
+
+        <div class="chat-history flex-grow-1 ms-2">
+          {% for chat in chat_history %}
+            <div class="chat-history-item d-flex justify-content-between align-items-center">
+              <a href="?chat_id={{ chat.id }}" class="flex-grow-1 text-white text-truncate text-decoration-none {% if selected_chat and selected_chat.id == chat.id %}fw-bold border-start border-4 border-info ps-2{% endif %}">{{ chat.short_title }}</a>
+              <a href="{% url 'delete_model_chat' chat.id %}" class="delete-chat text-white" onclick="return confirm('Are you sure you want to delete this chat?');"><i class="fas fa-trash"></i></a>
+            </div>
+          {% empty %}
+            <div class="chat-history-item">No previous chats.</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button id="themeToggleBtn" class="theme-toggle-btn"><i class="fas fa-moon"></i> Themes</button>
+        <button id="logoutBtn" data-bs-toggle="modal" data-bs-target="#logoutModal" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+
+    <div class="content flex-grow-1" id="chatContent">
+      <div class="chat-container" id="responseDiv">
+        {% for message in chat_messages %}
+          {% if message.is_user %}
+            <div class="user-chat-box"><div class="user-chat-area"><span class="role-label"></span> {{ message.content }}</div></div>
+          {% else %}
+            <div class="ai-chat-box">
+              <div class="ai-chat-area markdown position-relative" data-raw="{{ message.content|escape }}">
+                <span class="role-label"></span>
+                <button class="copy-btn position-absolute top-0 end-0 m-2 btn btn-sm btn-outline-light" onclick="copyAnswer(this)"><i class="fas fa-copy"></i></button>
+                {{ message.content }}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="prompt-area">
+        <form id="askQuestionForm" method="post" action="{% url 'llama3_inference' %}" enctype="multipart/form-data" autocomplete="off">
+          {% csrf_token %}
+          <textarea name="question" id="questionInput" class="growing-textarea" placeholder="Message..." rows="1" required></textarea>
+          <button type="button" id="image-button"><img id="previewImage" src="{% static 'Solution/img.svg' %}" alt="Upload"></button>
+          <input type="file" name="image" id="fileUpload" accept="image/*" hidden>
+          <button type="submit" id="submit"><img src="{% static 'Solution/submit.svg' %}" alt="Send"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to logout?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const fileInput = document.getElementById('fileUpload');
+  const imageButton = document.getElementById('image-button');
+  const questionInput = document.getElementById('questionInput');
+  const previewImage = document.getElementById('previewImage');
+  const responseDiv = document.getElementById("responseDiv");
+document.getElementById("questionInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // prevent newline
+    document.getElementById("askQuestionForm").requestSubmit(); // submit form
+  }
+});
+  // Trigger hidden file input on image button click
+  imageButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    fileInput.click();
+  });
+
+  // When an image is selected, preview and extract text
+  fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+
+  // Validate file is an image
+  if (!file || !file.type.match(/^image\/(png|jpe?g|gif|bmp|webp)$/i)) {
+    alert("Please upload a valid image file.");
+    fileInput.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  // Show "extracting..." message
+  const extractingBox = document.createElement("div");
+  extractingBox.className = "ai-chat-box extracting-box";
+  extractingBox.innerHTML = `
+    <div class="ai-chat-area">
+      <span class="role-label"></span>
+      <em>🔍 Extracting text from image...</em>
+    </div>`;
+  responseDiv.appendChild(extractingBox);
+  responseDiv.scrollTop = responseDiv.scrollHeight;
+
+  reader.onload = (e) => {
+    const imgData = e.target.result;
+    previewImage.src = imgData;
+    previewImage.classList.add("uploaded");
+
+    Tesseract.recognize(
+      imgData,
+      'eng',
+      { logger: m => console.log(m) }
+    ).then(({ data: { text } }) => {
+      responseDiv.removeChild(extractingBox);
+      // Put extracted text into the input field
+      questionInput.value = text.trim();
+    }).catch(err => {
+      responseDiv.removeChild(extractingBox);
+      const errorBox = document.createElement("div");
+      errorBox.className = "ai-chat-box";
+      errorBox.innerHTML = `<div class="ai-chat-area text-danger">❌ OCR failed: ${err.message}</div>`;
+      responseDiv.appendChild(errorBox);
+    });
+  };
+
+  reader.readAsDataURL(file);
+});
+
+</script>
+
+
+  <script>
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    let currentChatId = new URLSearchParams(window.location.search).get("chat_id") || null;
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      themeToggleBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i> Light Theme' : '<i class="fas fa-moon"></i> Dark Theme';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme(localStorage.getItem('theme') || 'light');
+    });
+
+    themeToggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggleBtn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('chat-container');
+
+    // Event listener for toggling the sidebar
+    sidebarToggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      mainContent.classList.toggle('collapsed');
+
+      // Save the state of the sidebar in localStorage (optional)
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      localStorage.setItem('sidebar-collapsed', isCollapsed);
+    });
+  });
+  
+
+    document.getElementById("askQuestionForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const question = document.getElementById("questionInput").value.trim();
+      if (!question) return;
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      const userBox = document.createElement("div");
+      userBox.className = "user-chat-box";
+      userBox.innerHTML = `<div class="user-chat-area"><span class="role-label"></span> ${question}</div>`;
+      responseDiv.appendChild(userBox);
+
+      const formData = new URLSearchParams();
+      formData.append("question", question);
+      if (currentChatId) formData.append("chat_id", currentChatId);
+
+      fetch("{% url 'llama3_inference' %}", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": csrfToken },
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            if (!currentChatId && data.chat_id) {
+              window.location.href = `?chat_id=${data.chat_id}`;
+              return;
+            }
+            const aiBox = document.createElement("div");
+            aiBox.className = "ai-chat-box";
+
+            const aiChatArea = document.createElement("div");
+            aiChatArea.className = "ai-chat-area markdown position-relative";
+            aiChatArea.innerHTML = `
+              <span class="role-label"></span>
+              <button class="copy-btn position-absolute top-0 end-0 m-2 btn btn-sm btn-outline-danger" onclick="copyAnswer(this)">
+                <i class="fas fa-copy"></i>
+              </button>
+              <span id="animated-response"></span>
+            `;
+
+            aiBox.appendChild(aiChatArea);
+            responseDiv.appendChild(aiBox);
+            responseDiv.scrollTop = responseDiv.scrollHeight;
+
+            // Typing animation logic
+            function typeMarkdown(element, rawMarkdown, speed = 15) {
+              let index = 0;
+              const interval = setInterval(() => {
+                if (index <= rawMarkdown.length) {
+                  element.innerHTML = marked.parse(rawMarkdown.slice(0, index));
+                  responseDiv.scrollTop = responseDiv.scrollHeight;
+                  index++;
+                } else {
+                  clearInterval(interval);
+                  if (window.MathJax) MathJax.typesetPromise(); // Render math after typing
+                }
+              }, speed);
+            }
+
+            // Start animation
+            const rawText = data.output || "No response.";
+            const animatedSpan = aiChatArea.querySelector('#animated-response');
+            typeMarkdown(animatedSpan, rawText);
+
+          }
+        })
+        .catch(err => {
+          const errorBox = document.createElement("div");
+          errorBox.className = "ai-chat-box";
+          errorBox.innerHTML = `<div class="ai-chat-area markdown text-danger">Error: ${err.message}</div>`;
+          responseDiv.appendChild(errorBox);
+        });
+
+      document.getElementById("questionInput").value = '';
+      previewImage.src = "{% static 'Solution/img.svg' %}";
+      previewImage.classList.remove("uploaded");
+    });
+
+    window.copyAnswer = function (btn) {
+      const textToCopy = btn.parentElement.textContent.trim();
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 1500);
+      });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.markdown[data-raw]').forEach(el => {
+    const raw = el.getAttribute('data-raw');
+    el.innerHTML = marked.parse(raw);
+  });
+
+  if (window.MathJax) MathJax.typesetPromise();
+});
+
+  </script>
+</body>
+</html>

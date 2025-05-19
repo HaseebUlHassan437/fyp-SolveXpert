@@ -1,0 +1,260 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="widtSh=device-width, initial-scale=1.0">
+    <title>SolveXpert-About Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'Solution/css/style.css' %}">
+    <link rel="icon" href="{% static 'Solution/SolveXpert Logo.jpg' %}" type="image/x-icon" />
+    <style>
+        /* Header Styling */
+        .header-section {
+            position: relative;
+            height: 100vh;  /* Full height of the screen */
+            background-image: url("{% static 'Solution/background.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            opacity: 1; /* Apply opacity to the background image */
+            color: white;
+            text-align: center;
+            padding-top: 5%;
+            
+        }
+
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay for readability */
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 3rem 1rem;
+        }
+
+        .content-section h2 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .content-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: white;
+        }
+
+        /* Cards Section */
+        .team-section {
+            padding: 3rem 1rem;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .navbar-logo {
+            height: 100%; /* Makes the image's height match the navbar */
+            border-radius: 50%; /* Makes the edges fully rounded (circular) */
+            object-fit: cover; /* Ensures the image maintains proportions and fits inside the height */
+            max-height: 50px; /* Optional: Limit the max height to fit nicely */
+        }
+        .hero-section {
+            
+        }
+        body {
+            overflow-x: hidden;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateX(150px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        
+        /* Apply when the element is in view */
+        .fade-in.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .card {
+            transform: scale(1);
+            transition: transform 0.1s ease-in-out;
+        }
+        
+        /* Active Zoom-In State */
+        .card.zoom-in {
+            transform: scale(1.1); /* Zoom in */
+        }
+
+    </style>
+</head>
+<body>
+    {% comment %} <header>
+        <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+            <div class="container-fluid">
+                <img class="rounded navbar-logo" src="{% static 'Solution/SolveXpert Logo.jpg' %}" alt="SolveXpert Logo">
+                <a class="navbar-brand" href="#">SolveXpert</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="{% url 'home' %}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'questions' %}">Question</a>
+                        </li>
+                    </ul>
+                    <div class="ms-auto">
+                        {% if user.is_authenticated %}
+                            <li><span class="navbar-text">Welcome, {{ user.username }}</span></li>
+                            <li><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a></li>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                            <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header> {% endcomment %}
+
+    <header>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <!-- Navbar content: no fade-in class here -->
+        <div class="container-fluid">
+            <img class="rounded navbar-logo" src="{% static 'Solution/SolveXpert Logo.jpg' %}" alt="SolveXpert Logo">
+            <a class="navbar-brand" href="#">SolveXpert</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'questions' %}">Question</a>
+                    </li>
+                </ul>
+                <div class="ms-auto">
+                    {% if user.is_authenticated %}
+                        <li><span class="navbar-text">Welcome, {{ user.username }}</span></li>
+                        <li><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a></li>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+    <!-- Hero Section -->
+    <div class="header-section fade-in" id="headerSection">
+        <div>
+            <h1 id="about-us-heading"></h1>
+        </div>
+        <!-- Content Section -->
+    <div class="content-section container fade-in" id="contentSection">
+        <h2>Who We Are</h2>
+        <p>
+            SolveXpert specializes in providing AI-powered solutions for math-related challenges. From solving equations to understanding complex concepts, our platform offers innovative tools and step-by-step explanations to simplify learning and problem-solving. Designed for students, educators, and professionals, SolveXpert makes tackling mathematical problems intuitive, efficient, and accessible to everyone. Transform math into an exciting journey with SolveXpert by your side!
+        </p>
+    </div>
+    </div>
+    
+    
+
+    <!-- Team Section -->
+    <section class="team-section fade-in" id="teamSection">
+        <div class="container">
+            <h2 class="text-center mb-5">Meet Our Team</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card fade-in-card" id="card1">
+                        <img src="{% static 'Solution/team1.jpg' %}" class="card-img-top" alt="Team Member">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Alice Johnson</h5>
+                            <p class="card-text">Head Educator</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card fade-in-card" id="card2">
+                        <img src="{% static 'Solution/team2.jpg' %}" class="card-img-top" alt="Team Member">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Bob Smith</h5>
+                            <p class="card-text">Creative Director</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card fade-in-card" id="card3">
+                        <img src="{% static 'Solution/team3.jpg' %}" class="card-img-top" alt="Team Member">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Emma Davis</h5>
+                            <p class="card-text">Program Manager</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="{% static 'Solution/js/script.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Typed.js for the About Us heading
+            new Typed('#about-us-heading', {
+                strings: ["About Us"],
+                typeSpeed: 50,
+                startDelay: 500,
+                loop: false,
+                showCursor: false
+            });
+    
+            // Scroll-triggered fade-in for content sections
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("show");
+                        }
+                    });
+                },
+                { threshold: 0.5 } // Adjust threshold as needed
+            );
+    
+            // Observe all elements with the fade-in class
+            document.querySelectorAll(".fade-in").forEach((el) => observer.observe(el));
+        });
+    </script>
+    
+    
+</body>
+</html>

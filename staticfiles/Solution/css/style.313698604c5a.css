@@ -1,0 +1,686 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* --------------------------
+Light & Dark Theme Variables
+--------------------------- */
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --sidebar-background: #f5f5f5;
+    --card-background: #f9f9f9;
+    --button-background: #e0e0e0;
+    --button-hover-background: #d6d6d6;
+    --border-color: #cccccc;
+    --sidebar-btn: #007bff;
+    --ai-background-color: #eeffff;
+    --user-background-color: #ffffee;
+}
+
+[data-theme="dark"] {
+    --background-color: #1e1e2e;
+    --text-color: #ffffff;
+    --sidebar-background: #282c34;
+    --card-background: #2d2d3a;
+    --button-background: #343541;
+    --button-hover-background: #2d2d2d;
+    --border-color: #565869;
+    --sidebar-btn: #ffffff;
+    --ai-background-color: #36454F;
+    --user-background-color: #000000;
+
+
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    /* background: linear-gradient(45deg, #00AEEF, #001F3F, #FF6F3C); */
+    /* background-color: #000000; */
+    background-image: url("../background.490ca1c3da6b.jpg");
+    color: var(--text-color);
+    overflow-x: hidden;
+    cursor: default;
+
+
+}
+a.btn-theme {
+  color: var(--text-color) !important;
+}
+
+.main-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-background);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.navbar-logo {
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sidebar-content {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        z-index: 1050;
+        background: #212529;
+    }
+
+    .sidebar.active {
+        transform: translateX(260px);
+    }
+
+    .toggle-sidebar {
+        display: block;
+        position: fixed;
+        left: 1rem;
+        top: 1rem;
+        z-index: 1001;
+        background: none;
+        border: none;
+        color: var(--text-color);
+        font-size: 1.5rem;
+    }
+
+    #chatContent.sidebar-visible {
+        margin-left: 260px;
+    }
+}
+
+.new-chat-button,
+.sidebar-footer button,
+#readAloudBtn,
+#audioPlayer {
+    background-color: var(--button-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.8rem;
+}
+
+#readAloudBtn {
+    opacity: 0;
+}
+
+.new-chat-button:hover,
+.sidebar-footer button:hover {
+    background-color: var(--button-hover-background);
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.solution-container {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.solution-card {
+    position: relative;
+    background-color: var(--button-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--button-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.copy-btn i {
+    font-size: 1rem;
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
+
+.input-container {
+    padding: 1rem;
+    background-color: var(--card-background);
+}
+
+.input-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.input-field {
+    width: 100%;
+    background-color: var(--button-background);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem 3rem;
+    font-size: 1rem;
+    resize: none;
+    min-height: 50px;
+    max-height: 200px;
+}
+
+.upload-icon,
+.send-button {
+    position: absolute;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.upload-icon {
+    left: 0.75rem;
+    bottom: 0.95rem;
+}
+
+.send-button {
+    right: 0.75rem;
+    bottom: 0.95rem;
+}
+
+.upload-icon:hover,
+.send-button:hover {
+    color: var(--text-color);
+    background-color: var(--button-hover-background);
+}
+
+#fileUpload {
+    display: none;
+}
+
+.modal-header {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    background-color: var(--button-background);
+}
+
+.btn-secondary {
+    background-color: var(--button-background);
+    color: var(--text-color);
+    border: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.copy-btn:hover,
+.send-button:hover {
+    background-color: var(--button-hover-background);
+}
+
+.new-chat-button,
+.chat-history-item {
+    background-color: transparent !important;
+    /* color: #007bff !important;              🔵 Blue text */
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 10px 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+.new-chat-button:hover,
+.chat-history-item:hover {
+    background-color: rgba(0, 123, 255, 0.1) !important;
+    border-color: #0056b3 !important;
+    color: #0056b3 !important;
+    text-decoration: none !important;
+}
+
+.chat-history {
+    margin-top: 15px;
+    text-decoration: none !important;
+}
+
+.chat-history-item a:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--sidebar-btn) !important;           /* 🔵 Blue for links */
+}
+
+.chat-history-item .divider {
+    background-color: #007bff;
+    width: 1px;
+    height: 70%;
+    margin: 0 10px;
+}
+
+.chat-history-item .delete-chat {
+    font-size: 16px;
+    color: var(--sidebar-btn) !important;
+
+    margin-left: auto;
+    cursor: pointer;
+}
+
+
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+#chatContent {
+    transition: margin-left 0.3s ease;
+    background-color: var(--background-color);
+    color: var(--text-color);
+
+}
+
+/* Avatar animation container */
+#avatarContainer {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+/* Mute button styling */
+#muteBtn {
+    background-color: var(--button-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#muteBtn:hover {
+    background-color: var(--button-hover-background);
+}
+
+.navbar-logo {
+    height: 100%; border-radius: 50%; object-fit: cover; max-height: 50px; 
+}
+.hero-section, .header-section {
+    position: relative; height: 100vh;
+    background-image: url("../background.490ca1c3da6b.jpg");
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+.hero-section img{
+    padding-top: 100px;
+}
+        .hero-text, .header-section h1 {
+            /* background-color: rgba(0, 0, 0, 0.6); */
+            padding: 10% 3%;
+            /* border-radius: 10px; */
+            text-align: center;
+
+        }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+        .fade-in.show { opacity: 1; transform: translateY(0); }
+        /* Contact Form Fields */
+
+        #contactSection {
+            margin-top: 100px;  /* Adjust the value as needed */
+        }
+        
+
+.contact-form input,
+.contact-form textarea {
+    background-color: white; /* Make the background transparent */
+    color: black; /* Set text color to white */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Light border for visibility */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px;
+    width: 100%;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input and Textarea on Focus */
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #FF6F3C; /* Change border color on focus */
+    box-shadow: 0 0 5px rgba(255, 111, 60, 0.8); /* Add a glow effect on focus */
+}
+
+/* Contact Form Submit Button */
+.contact-form button {
+    background-color: transparent; /* Make button background transparent */
+    color: #fff; /* Text color */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Button Hover Effect */
+.contact-form button:hover {
+    background-color: rgba(255, 111, 60, 0.1); /* Subtle background on hover */
+    border-color: #FF6F3C; /* Highlight border on hover */
+}
+
+        .contact-section h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.2) !important ;
+            margin-bottom: 30px;
+            padding: 20px;
+            /* padding-right: 20px; */
+
+        }
+        .about-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: stretch;
+            flex-wrap: wrap;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .about-box {
+            flex: 1 1 45%;
+            background-color: rgba(255, 255, 255, 0.05); /* light overlay */
+            padding: 2rem;
+            border-radius: 10px;
+            /* backdrop-filter: blur(4px); */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+            color: var(--text-color);
+            min-width: 300px;
+            margin-bottom: 5%;
+            color: white;
+            transition: transform 0.3s ease; /* For smooth zoom effect */
+        }
+        
+        .about-box:hover {
+            transform: scale(1.05); /* Zoom in slightly */
+        }
+        
+        
+        .left-box {
+            border-left: 5px solid #FF6F3C;
+            border-right: 5px solid #FF6F3C;
+            position: relative; /* Required for box-shadow */
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .left-box:hover {
+            box-shadow: 0 0 15px 5px rgba(255, 111, 60, 0.8); /* Glow effect */
+            cursor: pointer; /* Change cursor to indicate interactivity */
+        }
+        
+        /* For the right box */
+        .right-box {
+            border-right: 5px solid #00AEEF;
+            border-left: 5px solid #00AEEF;
+            position: relative; /* Required for box-shadow */
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .right-box:hover {
+            box-shadow: 0 0 15px 5px rgba(0, 174, 239, 0.8); /* Glow effect */
+            cursor: pointer; /* Change cursor to indicate interactivity */
+        }
+        
+        #about-us-heading {
+            text-align: center;
+            /* margin-top: 1rem;
+            margin-bottom: 1rem; */
+            /* font-size: 2rem; reduced from 2.5rem */
+            font-weight: 500;
+            /* color: var(--text-color); */
+            color: white;
+            z-index: 3;
+            position: relative;
+        }
+        
+        
+        
+        .navbar {
+            /* background-color: rgba(255, 255, 255, 0.05) !important ;light overlay */
+            background-color: #212529;
+            box-shadow: none;
+            border: none;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            position: fixed;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-link.active {
+            color: #FF6F3C;
+            border-bottom: 2px solid #00AEEF;
+        }
+        #aboutSection {
+            margin-bottom: 3rem;
+        }
+        
+        .contact-section {
+            padding-top: 4rem;
+            color: white;
+        }
+        .hero-image img.hero-blend {
+            max-height: 450px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            opacity: 0.85; /* subtle fade into background */
+            mix-blend-mode: lighten; /* blends well over dark bg */
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)) blur(0.5px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .hero-image img.hero-blend:hover {
+            transform: scale(1.02);
+            opacity: 0.5;
+        }
+        .image-wrapper {
+            display: inline-block;
+            border-radius: 30px;
+            overflow: hidden; /* Needed to apply border-radius and hide overflow */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.3)); /* soft shadow/blur effect */
+        }
+        
+        .rounded-blur-img {
+            display: block;
+            opacity: 0.5;
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+        .rounded-blur-img:hover{
+            opacity: 1;
+        }
+        .custom-login-btn {
+            color: #00AEEF;
+            border: 2px solid #00AEEF;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-login-btn:hover {
+            background-color: #00AEEF;
+            color: white;
+        }
+        
+        .custom-signup-btn {
+            background-color: #00AEEF;
+            color: white;
+            border: none;
+        }
+        .btn-logout {
+            background-color: transparent;
+            border: 1px solid transparent;
+            color: #FF6F3C;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            background-color: rgba(255, 111, 60, 0.1);
+            border-color: #FF6F3C;
+            color: #FF6F3C;
+        }
+        /* Active document blue bar */
+#documentList button {
+  position: relative;
+  padding-left: 16px; /* space for left bar */
+  text-align: left;
+}
+
+#documentList button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background-color: #00AEEF;
+  border-radius: 2px;
+}
+
+/* Optional: highlight on hover */
+#documentList button:hover {
+  background-color: var(--hover-background, rgba(0, 174, 239, 0.1));
+}
+#voiceBtn {
+    position: absolute;
+    top: 50px;
+    left: 10px; /* Move the image button to the left */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: black;
+    border: none;
+    box-shadow: 2px 2px 10px black;
+    cursor: pointer;
+    transition: all 0.5s;
+    z-index: 1; /* Image button stays below the other button */
+  /* background-color: #007bff; */
+  color: white;
+  /* border: none; */
+  /* padding: 8px 10px; */
+  /* border-radius: 6px; */
+  /* margin-left: 8px; */
+  cursor: pointer;
+}
+
+#voiceBtn:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.hero-content, .about-container {
+            flex-wrap: wrap;
+        }
+
+        .hero-text, .hero-image {
+            width: 100%;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .hero-text, .hero-image {
+                width: 50%;
+                text-align: left;
+            }
+        }
+
+        .about-box {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .about-container {
+                display: flex;
+                gap: 2rem;
+            }
+            .about-box {
+                width: 50%;
+            }
+        }
+        .sidebar-content::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+}

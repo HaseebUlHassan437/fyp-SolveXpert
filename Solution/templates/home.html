@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolveXpert - Home & About</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'Solution/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'Solution/css/home.css' %}">
+    <link rel="icon" href="{% static 'Solution/SolveXpert Logo.jpg' %}" type="image/x-icon" />
+</head>
+<body>
+<header>
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img class="rounded navbar-logo me-2" src="{% static 'Solution/SolveXpert Logo.jpg' %}" alt="SolveXpert Logo" style="height: 40px;">
+      SolveXpert
+    </a>
+
+    <!-- Toggle button for small screens -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#aboutSection">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contactSection">Contact Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'questions' %}">Solver</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'rag' %}">RAG</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'llama3' %}">Our Model</a></li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        {% if user.is_authenticated %}
+          {% comment %} <li class="nav-item">
+            <span class="navbar-text text-white me-2">Welcome, {{ user.username }}</span>
+          </li> {% endcomment %}
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item me-2">
+            <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'signup' %}" class="btn btn-outline-info">Sign Up</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+</header>
+
+
+<!-- HERO SECTION -->
+<main>
+    <section class="hero-section fade-in" id="home">
+        <div class="container hero-content d-flex align-items-center justify-content-between flex-wrap-reverse">
+            <!-- Left side: Text -->
+            <div class="hero-text col-lg-6 col-md-12">
+                <h1 id="element1">Welcome to <span style="color: #FF6F3C;">SolveXpert</span></h1>
+                <h2 id="element2">Empowering You with Smart AI Math Solutions</h2>
+                <p id="element3" style="opacity: 1;">
+                    SolveXpert is your intelligent companion for solving complex math problems, learning new concepts, 
+                    and exploring AI-powered assistance — all in real-time. Whether you're a student, teacher, or enthusiast, 
+                    our platform is designed to make math easier, faster, and more intuitive.
+                </p>
+                {% comment %} <p style="opacity: 1;">
+                    With features like voice-guided answers, personalized avatars, and powerful retrieval-based explanations, 
+                    you're just one question away from understanding even the toughest equations.
+                </p> {% endcomment %}
+                <a id="getStartedBtn" href="/questions" class="btn btn-primary mt-3" style="opacity: 1;">Get Started</a>
+            </div>
+    
+            <!-- Right side: Image -->
+            <div class="hero-image col-lg-6 col-md-12 text-center">
+                <div class="image-wrapper">
+                    <img src="{% static 'Solution/homepic.png' %}" alt="AI Illustration" class="img-fluid rounded-blur-img">
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+
+    <!-- ABOUT SECTION -->
+<section id="aboutSection" class="header-section fade-in">
+    <h1 id="about-us-heading">About Us</h1>
+    <div class="content-section container fade-in about-container">
+        <div class="about-box left-box">
+            <h2>Our Vision</h2>
+            <p>
+                At SolveXpert, we envision a world where math is no longer a barrier but a bridge to learning. 
+                Our AI-driven platform empowers students, educators, and curious minds by simplifying complex 
+                math problems through intelligent, interactive tools.
+            </p>
+        </div>
+        <div class="about-box right-box">
+            <h2>Our Technology</h2>
+            <p>
+                Built with cutting-edge AI, real-time voice output, and retrieval-augmented generation (RAG), 
+                SolveXpert turns static math into dynamic conversations. Users can talk, listen, and interact 
+                with our smart avatar to explore problems step by step.
+            </p>
+        </div>
+    </div>
+</section>
+
+    <!-- TEAM SECTION
+    <section class="team-section fade-in" id="teamSection">
+        <div class="container">
+            <h2 class="text-center mb-5">Meet Our Team</h2>
+            <div class="row">
+                <div class="col-md-4"><div class="card"><img src="{% static 'Solution/team1.jpg' %}" class="card-img-top"><div class="card-body text-center"><h5 class="card-title">Alice Johnson</h5><p class="card-text">Head Educator</p></div></div></div>
+                <div class="col-md-4"><div class="card"><img src="{% static 'Solution/team2.jpg' %}" class="card-img-top"><div class="card-body text-center"><h5 class="card-title">Bob Smith</h5><p class="card-text">Creative Director</p></div></div></div>
+                <div class="col-md-4"><div class="card"><img src="{% static 'Solution/team3.jpg' %}" class="card-img-top"><div class="card-body text-center"><h5 class="card-title">Emma Davis</h5><p class="card-text">Program Manager</p></div></div></div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section fade-in" id="contactSection">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <form class="contact-form" id="contactForm">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Your Name</label>
+                    <input type="text" class="form-control p-3 mb-3" id="name" name="name" placeholder="Enter your name">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control p-3 mb-3" id="email" name="email" placeholder="name@example.com">
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control p-3 mb-3" id="message" name="message" rows="4" placeholder="Write your message..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+            
+        </div>
+    </section>
+</main>
+
+<footer class="bg-dark text-light text-center py-3">
+    &copy; 2025 SolveXpert. All rights reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    function updateActiveLink() {
+        const scrollY = window.pageYOffset;
+
+        sections.forEach((section) => {
+            const sectionTop = section.offsetTop - 400; // account for fixed navbar
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute("id");
+
+            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                navLinks.forEach((link) => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === `#${sectionId}`) {
+                        link.classList.add("active");
+                    }
+                });
+            }
+        });
+    }
+
+    window.addEventListener("scroll", updateActiveLink);
+    updateActiveLink(); // run once on load
+});
+
+
+
+
+    new Typed('#element1', {
+        strings: ["Welcome to SolveXpert"],
+        typeSpeed: 50, loop: false, showCursor: false, startDelay: 500
+    });
+    new Typed('#element2', {
+        strings: ["New Approach to Learn Math"],
+        typeSpeed: 50, loop: false, showCursor: false, startDelay: 3000,
+        onComplete: () => {
+            document.getElementById('element3').style.opacity = 1;
+            document.getElementById('getStartedBtn').style.opacity = 1;
+        }
+    });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("show");
+        });
+    }, { threshold: 0.5 });
+    document.querySelectorAll(".fade-in").forEach((el) => observer.observe(el));
+
+
+    document.querySelector(".contact-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+    
+        const form = e.target;
+        const formData = new FormData(form);
+    
+        fetch("/send-message/", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Message sent");
+                    form.reset();
+                } else {
+                    alert("Message failed to send.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again later.");
+            });
+    });
+    
+</script>
+
+
+    
+</body>
+</html>
