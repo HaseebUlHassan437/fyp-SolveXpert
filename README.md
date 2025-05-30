@@ -211,6 +211,3 @@ The video showcases the following functionalities:
   * **Project Video:** [AI SolveXpert Demonstration](https://www.youtube.com/watch?v=wtenLqpVXoQ&t=1s)
 
 -----
-
-I hope this is satisfactory\! Let me know if you have any other changes.
-http://googleusercontent.com/youtube_content/0
