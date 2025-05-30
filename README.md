@@ -201,4 +201,4 @@ This project is licensed under the MIT License. See the `LICENSE` file in the re
 ## 🔗 Project Links
 
   * **GitHub Repository:** [HaseebUlHassan437/fyp-SolveXpert](https://github.com/HaseebUlHassan437/fyp-SolveXpert/tree/main)
-  * **Final Year Project Report:** [SolveXpertFinalReport.pdf](https://www.google.com/search?q=uploaded:SolveXpertFinalReport.pdf)
+  * **Final Year Project Report:** [SolveXpertFinalReport.pdf](SolveXpertFinalReport.pdf)
