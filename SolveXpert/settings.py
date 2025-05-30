@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-1uz=kx@9!a48z*938uh_hf(8j!m*oh(e-z6^w@t#u=7r-xz+oz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -56,15 +56,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-
 
 ROOT_URLCONF = 'SolveXpert.urls'
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # for development
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')    # for deployment
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "Solution/static",
 ]

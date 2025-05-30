@@ -402,22 +402,6 @@ def questions(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required(login_url='login')
 def delete_chat(request, chat_id):
     chat = get_object_or_404(Chat, id=chat_id, user=request.user)
@@ -570,9 +554,7 @@ def ask_question_document(request):
             tts.save(temp_audio_path)
 
             audio_file = open(temp_audio_path, 'rb')
-            # response = FileResponse(audio_file, content_type='audio/mpeg')
-            # response['Content-Disposition'] = 'inline; filename="response.mp3"'
-            # response['X-Text-Response'] = answer  # Important! frontend reads this 
+            
             from django.http import JsonResponse
             import base64
 
@@ -695,7 +677,7 @@ def llama3_inference(request):
             messages.append(HumanMessage(content=user_input))
 
             # Step 1: Query Colab model
-            colab_api_url = "https://5dc4-34-125-207-203.ngrok-free.app/generate"
+            colab_api_url = "https://5a02-34-125-249-196.ngrok-free.app/generate"
             colab_response = requests.post(colab_api_url, json={"problem": user_input}, timeout=15)
             colab_response.raise_for_status()
             raw_answer = colab_response.json().get("response", "No response from model.")
@@ -705,9 +687,9 @@ def llama3_inference(request):
                 SystemMessage(content="""
                     You are a math assistant. Your job is to take raw responses related to mathematical problems and do the following:
                     
-                    1. Correct any logical or mathematical errors.
+                    1. Correct any logical or mathematical errors without mentioning like words corrected etc.
                     2. Apply proper step-by-step explanation where needed.
-                    3. Format the final response strictly in **Markdown** using line breaks and math expressions (\\( \\) or $$ $$).
+                    3. Format the final response strictly in **Markdown** using line breaks and math expressions (\\( \\) or $$ $$) but not mentioned like here the properly formatted response.
 
                     Only answer if the input is math-related. If not, say:
                     "Sorry, I can only help with math-related questions. Please ask a math problem or concept.  but if the user say hi,hey  or hello, don't say sorry .... say like math solver here  repsond like this,ask any math question"
@@ -728,7 +710,7 @@ def llama3_inference(request):
             return JsonResponse({
                 "success": True,
                 "output": formatted_answer,
-                "chat_id": chat_instance.i
+                "chat_id": chat_instance.id
             })
 
         except requests.exceptions.RequestException as e:

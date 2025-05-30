@@ -21,14 +21,26 @@
       font-family: 'Cambria Math', serif;
     }
     .sidebar-toggle-btn {
-      position: fixed; top: 15px; left: 15px;
-      z-index: 9999; background: transparent;
-      border: none; font-size: 24px;
-      color: var(--text-color); cursor: pointer;
+      position: fixed; 
+      top: 15px; 
+      left: 15px;
+      z-index: 9999; 
+      background: transparent;
+      border: none; 
+      font-size: 24px;
+      color: var(--text-color); 
+      cursor: pointer;
+      transition: left 0.3s ease;
+
+
     }
-    .sidebar.collapsed {
-  display: none;
-}
+.sidebar.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      transition: all 0.3s ease;
+    }
     
     .ai-chat-area, .user-chat-area {
       font-family: "Cambria Math", serif;
@@ -263,8 +275,10 @@ document.getElementById("questionInput").addEventListener("keydown", function (e
         .then(data => {
           if (data.success) {
             if (!currentChatId && data.chat_id) {
-              window.location.href = `?chat_id=${data.chat_id}`;
-              return;
+                currentChatId = data.chat_id;
+                const url = new URL(window.location);
+                url.searchParams.set("chat_id", currentChatId);
+                window.history.replaceState({}, '', url); // update URL without reloading
             }
             const aiBox = document.createElement("div");
             aiBox.className = "ai-chat-box";
