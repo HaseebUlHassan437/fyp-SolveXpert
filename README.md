@@ -1,3 +1,4 @@
+
 # ✨ AI SolveXpert: Your Ultimate Math Problem Solver ✨
 
 ## 🚀 Project Overview
@@ -74,10 +75,13 @@ Before you begin, ensure you have the following installed:
     Activate the virtual environment:
 
       * **Windows:**
+
         ```bash
         .\venv\Scripts\activate
         ```
+
       * **macOS/Linux:**
+
         ```bash
         source venv/bin/activate
         ```
@@ -92,10 +96,15 @@ Before you begin, ensure you have the following installed:
 4.  **Database Configuration (MySQL with XAMPP):**
 
       * Start **Apache** and **MySQL** services from your XAMPP control panel.
+
       * Access `phpMyAdmin` (usually `http://localhost/phpmyadmin/`) through your browser.
+
       * Create a new database for SolveXpert (e.g., `solvexpert_db`).
+
       * Open the `fyp-SolveXpert/solvexpert/settings.py` file.
+
       * Locate the `DATABASES` setting and update it with your MySQL credentials, ensuring the `NAME` matches your created database name.
+
         ```python
         DATABASES = {
             'default': {
@@ -108,7 +117,9 @@ Before you begin, ensure you have the following installed:
             }
         }
         ```
+
       * Apply database migrations to create the necessary tables:
+
         ```bash
         python manage.py makemigrations
         python manage.py migrate
@@ -179,26 +190,27 @@ Potential areas for future development and expansion of AI SolveXpert:
   * **Personalized Learning Paths:** Develop features for tracking user progress and suggesting tailored learning materials.
   * **Community Features:** Introduce forums or collaborative spaces for users to discuss problems and solutions.
 
-## 🤝 Contributing
+## 📽️ Project Video Demonstration
 
-We welcome contributions to AI SolveXpert\! If you're interested in improving this project, please follow these guidelines:
+This video provides a demonstration of the AI SolveXpert platform and its features.
 
-1.  **Fork the repository.**
-2.  **Create a new branch** for your feature or bug fix: `git checkout -b feature/your-feature-name`
-3.  **Make your changes** and test them thoroughly.
-4.  **Commit your changes** with clear and descriptive commit messages.
-5.  **Push your branch** to your forked repository.
-6.  **Open a Pull Request** to the `main` branch of the original repository.
-      * Please describe your changes and the problem they solve.
-      * Ensure your code adheres to good coding practices.
+The video showcases the following functionalities:
 
-## 📜 License
-
-This project is licensed under the MIT License. See the `LICENSE` file in the repository for more details.
-
------
+  * **Secure Login and Sign-up:** Users can securely log in or sign up using their email addresses.
+  * **Math Problem Solving:** The AI model can solve math questions typed by the user or extracted from uploaded images using OCR.
+  * **Document-Based Question Answering (RAG):** Users can upload documents and ask context-based questions.
+  * **Spoken Answers with Avatar:** A Chroma Avatar provides spoken answers using text-to-speech.
+  * **Chat History and Context:** The platform maintains chat history for continuous learning.
+  * **Separate Pages:** The platform has distinct pages for model-based solving and document-based solving.
+  * **Light and Dark Theme:** The platform supports both light and dark themes.
 
 ## 🔗 Project Links
 
   * **GitHub Repository:** [HaseebUlHassan437/fyp-SolveXpert](https://github.com/HaseebUlHassan437/fyp-SolveXpert/tree/main)
   * **Final Year Project Report:** [SolveXpertFinalReport.pdf](SolveXpertFinalReport.pdf)
+  * **Project Video:** [AI SolveXpert Demonstration](https://www.youtube.com/watch?v=wtenLqpVXoQ&t=1s)
+
+-----
+
+I hope this is satisfactory\! Let me know if you have any other changes.
+http://googleusercontent.com/youtube_content/0
